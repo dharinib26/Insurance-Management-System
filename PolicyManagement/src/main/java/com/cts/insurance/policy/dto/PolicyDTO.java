@@ -1,0 +1,15 @@
+package com.cts.insurance.policy.dto;
+ 
+import lombok.Data;
+ 
+@Data
+public class PolicyDTO {
+    private Long id;
+    private String policyName;
+    private String policyType;
+    private String description;
+    private Double premium;
+    private int coverageAmount;
+    private CustomerDTO customer;
+    private AgentDTO agent;
+}
