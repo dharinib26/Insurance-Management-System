@@ -13,7 +13,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
  
-public class AgentManagementApplicationTests {
+ class AgentManagementApplicationTests {
  
     @InjectMocks
     private AgentServiceImpl service;

@@ -10,7 +10,8 @@ import java.util.Map;
  
 @RestControllerAdvice
 public class GlobalExceptionHandler {
- 
+	
+	// Handle AgentNotFoundException
     @ExceptionHandler(AgentNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleAgentNotFoundException(AgentNotFoundException ex) {
         Map<String, Object> body = new HashMap<>();
@@ -21,6 +22,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
  
+
+    // Handle generic exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
         Map<String, Object> body = new HashMap<>();

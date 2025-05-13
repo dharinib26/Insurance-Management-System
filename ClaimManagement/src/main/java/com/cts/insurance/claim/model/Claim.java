@@ -21,7 +21,7 @@ public class Claim {
 	private Long policyId;
 
 	@NotNull(message = "Claim amount is required")
-	@DecimalMin(value = "0.0", inclusive = false, message = "Claim amount must be positive")
+	@DecimalMin(value = "20000", inclusive = false, message = "Claim amount must be positive")
 	private Double claimAmount;
 
 	@NotBlank(message = "Claim reason is required")

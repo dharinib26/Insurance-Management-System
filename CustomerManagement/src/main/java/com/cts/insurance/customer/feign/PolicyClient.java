@@ -10,6 +10,6 @@ import java.util.List;
 
 @FeignClient(name = "policy-service")
 public interface PolicyClient {
-    @GetMapping("/api/policies/customer/{customerId}")
+    @GetMapping("/policies/customer/{customerId}")
     List<PolicyDTO> getPoliciesByCustomerId(@PathVariable Long customerId);
 }

@@ -2,7 +2,6 @@ package com.cts.insurance.notification.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -20,6 +19,5 @@ public class Notification {
 	private String message;
 
 	private String recipient;
-
-	//private LocalDateTime sentAt;
+	
 }

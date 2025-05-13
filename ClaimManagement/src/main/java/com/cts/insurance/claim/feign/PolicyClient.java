@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "PolicyManagement")
 public interface PolicyClient {
 
-	@GetMapping("/api/policies/{id}")
+	@GetMapping("/policies/{id}")
 	PolicyDTO getPolicyById(@PathVariable("id") Long id);
 }

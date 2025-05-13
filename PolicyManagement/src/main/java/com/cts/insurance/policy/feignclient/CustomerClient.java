@@ -9,6 +9,6 @@ import com.cts.insurance.policy.dto.CustomerDTO;
 @FeignClient(name = "CustomerManagement",url="http://localhost:8081")
 public interface CustomerClient {
  
-	@GetMapping("/api/customers/{id}")
+	@GetMapping("/customers/{id}")
     public CustomerDTO getCustomerById(@PathVariable("id") Long id);
 }

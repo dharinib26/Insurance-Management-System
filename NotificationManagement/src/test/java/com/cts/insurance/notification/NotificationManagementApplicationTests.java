@@ -9,8 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -78,7 +76,7 @@ class NotificationServiceImplTest {
                 //.sentAt(LocalDateTime.now())
                 .build();
  
-        when(policyClient.getPolicyById(policyId)).thenReturn(policyDTO);
+        when(policyClient.getById(policyId)).thenReturn(policyDTO);
         when(notificationRepository.save(any(Notification.class))).thenReturn(notification);
  
         // Act
@@ -89,7 +87,7 @@ class NotificationServiceImplTest {
         assertEquals("test@example.com", response.getRecipient());
         assertEquals(message, response.getMessage());
  
-        verify(policyClient, times(1)).getPolicyById(policyId);
+        verify(policyClient, times(1)).getById(policyId);
         verify(notificationRepository, times(1)).save(any(Notification.class));
     }
  
@@ -109,7 +107,7 @@ class NotificationServiceImplTest {
                 //.sentAt(LocalDateTime.now())
                 .build();
  
-        when(policyClient.getPolicyById(policyId)).thenReturn(policyDTO);
+        when(policyClient.getById(policyId)).thenReturn(policyDTO);
         when(notificationRepository.save(any(Notification.class))).thenReturn(notification);
  
         // Act
@@ -120,7 +118,7 @@ class NotificationServiceImplTest {
         assertEquals("holder@example.com", response.getRecipient());
         assertEquals(defaultMessage, response.getMessage());
  
-        verify(policyClient, times(1)).getPolicyById(policyId);
+        verify(policyClient, times(1)).getById(policyId);
         verify(notificationRepository, times(1)).save(any(Notification.class));
     }
  
@@ -128,7 +126,7 @@ class NotificationServiceImplTest {
     void testSendNotification_PolicyNotFound() {
         // Arrange
         Long invalidId = 999L;
-        when(policyClient.getPolicyById(invalidId)).thenThrow(new RuntimeException("Policy not found"));
+        when(policyClient.getById(invalidId)).thenThrow(new RuntimeException("Policy not found"));
  
         // Act & Assert
         RuntimeException ex = assertThrows(RuntimeException.class, () -> {
@@ -136,7 +134,7 @@ class NotificationServiceImplTest {
         });
  
         assertEquals("Policy not found", ex.getMessage());
-        verify(policyClient, times(1)).getPolicyById(invalidId);
+        verify(policyClient, times(1)).getById(invalidId);
         verify(notificationRepository, never()).save(any(Notification.class));
     }
 }
