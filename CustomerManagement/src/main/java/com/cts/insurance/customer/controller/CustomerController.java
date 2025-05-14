@@ -30,9 +30,9 @@ public class CustomerController {
 	}
 
 	@GetMapping("/{id}")
-	public Customer getCustomerById(@PathVariable Long id) {
-		return customerService.getCustomerById(id)
-				.orElseThrow(() -> new CustomerNotFoundException("Customer not found with ID: " + id));
+	public Customer getCustomerById(@PathVariable("id") Long id) throws CustomerNotFoundException {
+		System.out.println("customer Id :" + id);
+		return customerService.getCustomerById(id);
 	}
 
 	@PutMapping("/update/{id}")

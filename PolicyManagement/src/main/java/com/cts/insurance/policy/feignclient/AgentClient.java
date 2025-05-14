@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface AgentClient {
 
 	@GetMapping("/agents/{id}")
-	AgentDTO getAgentById(@PathVariable Long id);
+	AgentDTO getAgentById(@PathVariable Long agentId);
 }

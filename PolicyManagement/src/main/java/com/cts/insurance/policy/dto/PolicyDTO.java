@@ -10,6 +10,6 @@ public class PolicyDTO {
     private String description;
     private Double premium;
     private int coverageAmount;
-    private CustomerDTO customer;
-    private AgentDTO agent;
+    private long customerId;
+    private long agentId;
 }

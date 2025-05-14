@@ -16,9 +16,11 @@ public class Claim {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
 
 	@NotNull(message = "Policy ID is required")
 	private Long policyId;
+	private Long customerId;
 
 	@NotNull(message = "Claim amount is required")
 	@DecimalMin(value = "20000", inclusive = false, message = "Claim amount must be positive")

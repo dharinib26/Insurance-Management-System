@@ -1,19 +1,18 @@
 package com.cts.insurance.customer.service;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 
 import com.cts.insurance.customer.customerDTO.PolicyDTO;
+import com.cts.insurance.customer.exception.CustomerNotFoundException;
 import com.cts.insurance.customer.feign.PolicyClient;
 import com.cts.insurance.customer.model.Customer;
 import com.cts.insurance.customer.repository.CustomerRepository;
 
-import java.util.List;
-
-import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 
@@ -25,11 +24,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 	private CustomerRepository customerRepository;
 
-	
-	  @Autowired
-	  
-	  private PolicyClient policyClient;
-	 
+	@Autowired
+
+	private PolicyClient policyClient;
 
 	@Override
 
@@ -51,10 +48,13 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 
-	public Optional<Customer> getCustomerById(Long id) {
-
-		return customerRepository.findById(id);
-
+	public Customer getCustomerById(Long id) throws CustomerNotFoundException {
+		
+		Optional<Customer> optional = customerRepository.findById(id);
+		if (optional.isPresent())
+			return optional.get();
+		else
+			throw new CustomerNotFoundException("Customer not found with given id.");
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class CustomerServiceImpl implements CustomerService {
 	public List<PolicyDTO> getCustomerPolicies(Long customerId) {
 
 		return policyClient.getPoliciesByCustomerId(customerId);
-		//return List.of();
+		// return List.of();
 
 	}
 

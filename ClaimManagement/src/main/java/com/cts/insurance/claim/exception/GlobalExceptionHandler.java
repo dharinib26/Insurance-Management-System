@@ -11,7 +11,7 @@ import java.util.Map;
  
 @RestControllerAdvice
 public class GlobalExceptionHandler {
- 
+
     @ExceptionHandler(ClaimNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleClaimNotFoundException(ClaimNotFoundException ex) {
         Map<String, Object> error = new HashMap<>();
@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
         error.put("message", ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
- 
+
     @ExceptionHandler(InvalidClaimException.class)
     public ResponseEntity<Map<String, Object>> handleInvalidClaimException(InvalidClaimException ex) {
         Map<String, Object> error = new HashMap<>();
@@ -31,22 +31,22 @@ public class GlobalExceptionHandler {
         error.put("message", ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
- 
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException ex) {
         Map<String, Object> error = new HashMap<>();
         error.put("timestamp", LocalDateTime.now());
         error.put("status", HttpStatus.BAD_REQUEST.value());
         error.put("error", "Validation Failed");
- 
+
         Map<String, String> fieldErrors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(err ->
                 fieldErrors.put(err.getField(), err.getDefaultMessage()));
- 
+
         error.put("message", fieldErrors);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
- 
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
         Map<String, Object> error = new HashMap<>();

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.cts.insurance.customer.customerDTO.PolicyDTO;
+import com.cts.insurance.customer.exception.CustomerNotFoundException;
 import com.cts.insurance.customer.model.Customer;
 
 public interface CustomerService {
@@ -11,7 +12,7 @@ public interface CustomerService {
 
 	List<Customer> getAllCustomers();
 
-	Optional<Customer> getCustomerById(Long id);
+	Customer getCustomerById(Long id) throws CustomerNotFoundException;
 
 	Customer updateCustomer(Long id, Customer customerDetails);
 
