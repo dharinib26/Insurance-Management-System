@@ -90,21 +90,5 @@ class PolicyServiceTest {
 		service.deletePolicy(1L);
 		verify(repository, times(1)).deleteById(1L);
 	}
-
-	@Test
-	void testGetPolicyWithAgent() {
-		AgentDTO agent = new AgentDTO();
-		agent.setId(20L);
-		agent.setName("Agent Smith");
-		agent.setContactInfo("smith@example.com");
-
-		when(repository.findById(1L)).thenReturn(Optional.of(policy));
-		when(agentClient.getAgentById(20L)).thenReturn(agent);
-
-		PolicyDTO dto = service.getPolicyWithAgent(1L, 20L);
-
-		assertEquals("Life Cover", dto.getPolicyName());
-		assertNotNull(dto.getAgentId());
-		//assertEquals("Agent Smith", dto.getName((String)dto.getAgentId()));
-	}
+	
 }

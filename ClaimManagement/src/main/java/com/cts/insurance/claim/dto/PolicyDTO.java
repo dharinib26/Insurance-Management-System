@@ -2,11 +2,12 @@ package com.cts.insurance.claim.dto;
 
 import lombok.*;
 
-@Data
+@Data // Lombok annotation to generate getters, setters, toString, equals, and
+		// hashCode methods
 
 @NoArgsConstructor
 
-@AllArgsConstructor
+@AllArgsConstructor // Lombok annotation to generate a constructor with all fields
 
 @Builder
 

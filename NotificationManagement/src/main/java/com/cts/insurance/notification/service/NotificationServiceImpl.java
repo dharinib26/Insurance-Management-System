@@ -1,43 +1,52 @@
 package com.cts.insurance.notification.service;
 
-import com.cts.insurance.notification.dto.NotificationResponse;
-import com.cts.insurance.notification.dto.PolicyDTO;
-import com.cts.insurance.notification.model.Notification;
-import com.cts.insurance.notification.feign.PolicyClient;
-import com.cts.insurance.notification.repository.NotificationRepository;
+import java.time.LocalDate;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.cts.insurance.notification.dto.PolicyDTO;
+import com.cts.insurance.notification.feign.PolicyClient;
+import com.cts.insurance.notification.model.Notification;
+import com.cts.insurance.notification.repository.NotificationRepository;
+
+import lombok.RequiredArgsConstructor;
+
 @Service
-@Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
-	private NotificationRepository notificationRepository;
+	private final NotificationRepository repository;
+	private final PolicyClient policyClient;
+	private static final Logger logger = LoggerFactory.getLogger(NotificationServiceImpl.class);
 
-	private PolicyClient policyClient;
-
-	// Send a custom notification to a policy holder
-	@Override
-	public NotificationResponse sendNotification(Long policyId, String customMessage) {
+	// Notify about policy validity
+	public String notify(Long policyId) throws Exception {
 		PolicyDTO policy = policyClient.getById(policyId);
+		if (policy == null)
+			throw new Exception("Policy not found");
 
-		Notification notification = Notification.builder().message(customMessage).recipient(policy.getEmail())				
-				.build();
+		Notification notification = new Notification();
+		notification.setPolicyId(policy.getId());
+		notification.setCustomerId(policy.getCustomerId());
+		notification.setMessage("Your policy validity notificatoin");
+		notification.setDate(LocalDate.now().toString());
 
-		notificationRepository.save(notification);
-
-		log.info("Notification sent to policy holder with ID: {}", policyId);
-
-		return NotificationResponse.builder().message(notification.getMessage()).recipient(notification.getRecipient())
-				.build();
+		repository.save(notification);
+		logger.info("Notification sent for policy {}", policyId);
+		return "Notification sent";
 	}
 
-	// Notify with default message
-	@Override
-	public NotificationResponse notifyPolicyHolder(Long policyId) {
-		return sendNotification(policyId, "Your policy update notification.");
+	// Send a custom notification
+	public String sendCustomNotification(Notification notification) throws Exception {
+		if (notification.getMessage() == null || notification.getCustomerId() == null) {
+			throw new Exception("Invalid notification request");
+		}
+
+		notification.setDate(LocalDate.now().toString());
+		repository.save(notification);
+		logger.info("Custom notification sent to customer {}", notification.getCustomerId());
+		return "Custom notification sent";
 	}
 }

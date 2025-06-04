@@ -29,7 +29,7 @@ public class Policy {
     @NotNull(message = "Premium amount cannot be null")
     private Double premium;
  
-    private int coverageAmount;
+    private long coverageAmount;
     private long customerId;
     private long agentId;
 }

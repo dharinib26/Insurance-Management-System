@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class AgentDTO {
-	private Long id;
+	private Long Id;
 	private String name;
 	private String contactInfo;
 }

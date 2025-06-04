@@ -4,6 +4,7 @@ import com.cts.insurance.policy.dto.PolicyDTO;
 import com.cts.insurance.policy.exception.CustomerNotFoundException;
 import com.cts.insurance.policy.model.Policy;
 import com.cts.insurance.policy.service.PolicyService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +15,20 @@ import java.util.List;
 @RequestMapping("/policies")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin("*")
 public class PolicyController {
 
 	private final PolicyService service;
 
 	// Create policy
+//	@PostMapping("/create")
+//	public Policy create(@RequestBody Policy policy) throws CustomerNotFoundException {
+//		return service.createPolicy(policy);
+//	}
+	
 	@PostMapping("/create")
 	public Policy create(@RequestBody Policy policy) throws CustomerNotFoundException {
-		return service.createPolicy(policy);
+	    return service.createPolicy(policy);
 	}
 
 	// Get all policies
@@ -38,7 +45,7 @@ public class PolicyController {
 
 	// Update policy
 	@PutMapping("/update/{id}")
-	public Policy update(@PathVariable Long id, @RequestBody Policy policy) {
+	public Policy update(@PathVariable("id") Long id, @RequestBody Policy policy) {
 		return service.updatePolicy(id, policy);
 	}
 
@@ -48,17 +55,11 @@ public class PolicyController {
 		service.deletePolicy(id);
 	}
 	
-
-	// Get policy with customer details
-	@GetMapping("/with-customer/{policyId}/{customerId}")
-	public PolicyDTO getPolicyWithCustomer(@PathVariable("policyId") Long policyId,
-			@PathVariable("customerId") Long customerId) throws CustomerNotFoundException {
-		return service.getPolicyWithCustomer(policyId, customerId);
+	// Get policies by Customer ID
+	@GetMapping("/getPoliciesByCustomerId/{customerId}")
+	public List<Policy> getPoliciesByCustomerId(@PathVariable Long customerId) {
+	    return service.getPoliciesByCustomerId(customerId);
 	}
 
-	// Get policy with agent details
-	@GetMapping("/with-agent/{policyId}/{agentId}")
-	public PolicyDTO getWithAgent(@PathVariable("policyId") Long policyId, @PathVariable("agentId") Long agentId) {
-		return service.getPolicyWithAgent(policyId, agentId);
-	}
+	
 }

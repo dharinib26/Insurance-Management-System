@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 
+//Entity class representing an insurance claim
 @Entity
 @Data
 @NoArgsConstructor
@@ -16,7 +17,6 @@ public class Claim {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
 
 	@NotNull(message = "Policy ID is required")
 	private Long policyId;
@@ -32,6 +32,6 @@ public class Claim {
 	@NotNull(message = "Claim date is required")
 	private LocalDate claimDate;
 
-	@NotBlank(message = "Claim status is required")
+//	@NotBlank(message = "Claim status is required")
 	private String claimStatus;
 }

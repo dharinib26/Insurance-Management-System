@@ -7,8 +7,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class PolicyDTO {
-    private Long policyId;
-    private String policyHolderName;
-    private String policyType;
-    private String email;
+	private Long id;
+	private String name;
+    private long customerId;
+
 }

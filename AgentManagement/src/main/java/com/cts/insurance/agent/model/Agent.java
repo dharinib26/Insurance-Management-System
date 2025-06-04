@@ -15,13 +15,13 @@ public class Agent {
  
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // Auto-generated unique identifier for each agent
  
     @NotBlank(message = "Agent name is required")
-    private String name;
+    private String name; // Name of the agent, must not be blank
  
     private String contactInfo;
  
-    private String assignedPolicies; 
+    private String assignedPolicies; // Policies assigned to the agent
 }
  

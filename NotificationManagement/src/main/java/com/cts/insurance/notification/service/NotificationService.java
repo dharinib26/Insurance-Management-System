@@ -1,10 +1,9 @@
 package com.cts.insurance.notification.service;
 
-import com.cts.insurance.notification.dto.NotificationResponse;
+import com.cts.insurance.notification.model.Notification;
 
 public interface NotificationService {
  
-    NotificationResponse sendNotification(Long policyId, String customMessage);
- 
-    NotificationResponse notifyPolicyHolder(Long policyId);
+	String notify(Long policyId) throws Exception;
+    String sendCustomNotification(Notification notification) throws Exception;
 }

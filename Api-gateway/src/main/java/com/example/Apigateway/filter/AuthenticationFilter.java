@@ -15,64 +15,68 @@ import reactor.core.publisher.Mono;
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
 
-    @Autowired
-    private RouteValidator validator;
+	@Autowired
+	private RouteValidator validator;// Validates if the route requires authentication
 
-    @Autowired
-    private JwtUtil util;
+	@Autowired
+	private JwtUtil util;// Utility class for JWT operations
 
-    public static class Config {
-    }
+	public static class Config {
+	}
 
-    public AuthenticationFilter() {
-        super(Config.class);
-    }
+	public AuthenticationFilter() {
+		super(Config.class);
+	}
 
-    @Override
-    public GatewayFilter apply(Config config) {
-        return (exchange, chain) -> {
-            if (validator.isSecured.test(exchange.getRequest())) {
-                if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                    return handleUnauthorized(exchange.getResponse(), "Missing authorization header");
-                }
+	@Override
+	public GatewayFilter apply(Config config) {
+		return (exchange, chain) -> {
+			// Check if the request needs authentication
+			if (validator.isSecured.test(exchange.getRequest())) {
+				if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+					return handleUnauthorized(exchange.getResponse(), "Missing authorization header");
+				}
 
-                String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-                if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                    authHeader = authHeader.substring(7);
-                }
+				String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+				if (authHeader != null && authHeader.startsWith("Bearer ")) {
+					authHeader = authHeader.substring(7);
+				}
 
-                try {
-                    String role = util.extractRolesFromToken(authHeader);
-                    String requestedPath = exchange.getRequest().getPath().toString();
-                    String method = exchange.getRequest().getMethod().name();
+				try {
+					String role = util.extractRolesFromToken(authHeader);
+					String requestedPath = exchange.getRequest().getPath().toString();
+					String method = exchange.getRequest().getMethod().name();
 
-                    if (!isAuthorized(role, requestedPath, method)) {
-                        return handleUnauthorized(exchange.getResponse(), "Unauthorized access");
-                    }
+					if (!isAuthorized(role, requestedPath, method)) {
+						return handleUnauthorized(exchange.getResponse(), "Unauthorized access");// Handle unauthorized
+																									// access
+					}
 
-                } catch (Exception e) {
-                    return handleUnauthorized(exchange.getResponse(), "Invalid token");
-                }
-            }
-            return chain.filter(exchange);
-        };
-    }
+				} catch (Exception e) {
+					return handleUnauthorized(exchange.getResponse(), "Invalid token");// Handle invalid token
+				}
+			}
+			return chain.filter(exchange);
+		};
+	}
 
-    private boolean isAuthorized(String role, String path, String method) {
-        if ("ADMIN".equalsIgnoreCase(role)) {
-            return (path.startsWith("/policies") ||path.startsWith("/notifications") || path.startsWith("/agents") || path.startsWith("/claims") || path.startsWith("/customers")) ;
-        } else if ("CUSTOMER".equalsIgnoreCase(role)) {
-            return (path.startsWith("/policies") || path.startsWith("/claims")) && (method.equalsIgnoreCase("POST") || method.equalsIgnoreCase("PUT"));
-        }
-        else if ("AGENT".equalsIgnoreCase(role)) {
-            return (path.startsWith("/policies") || path.startsWith("/claims")) && (method.equalsIgnoreCase("PUT") || method.equalsIgnoreCase("GET"));
-        }
-        
-        return false;
-    }
+	private boolean isAuthorized(String role, String path, String method) {
+		if ("ADMIN".equalsIgnoreCase(role)) {
+			return (path.startsWith("/policies") || path.startsWith("/notifications") || path.startsWith("/agents")
+					|| path.startsWith("/claims") || path.startsWith("/customers"));
+		} else if ("CUSTOMER".equalsIgnoreCase(role)) {
+			return (path.startsWith("/policies") || path.startsWith("/claims"))
+					&& (method.equalsIgnoreCase("POST") || method.equalsIgnoreCase("PUT"));
+		} else if ("AGENT".equalsIgnoreCase(role)) {
+			return (path.startsWith("/policies") || path.startsWith("/claims"))
+					&& (method.equalsIgnoreCase("PUT") || method.equalsIgnoreCase("GET"));
+		}
 
-    private Mono<Void> handleUnauthorized(ServerHttpResponse response, String message) {
-        response.setStatusCode(HttpStatus.FORBIDDEN);
-        return response.setComplete();
-    }
+		return false;
+	}
+
+	private Mono<Void> handleUnauthorized(ServerHttpResponse response, String message) {
+		response.setStatusCode(HttpStatus.FORBIDDEN);
+		return response.setComplete();
+	}
 }

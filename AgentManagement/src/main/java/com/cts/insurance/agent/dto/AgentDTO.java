@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+@Data // Lombok annotation to generate getters, setters, and other methods
 @AllArgsConstructor
 @NoArgsConstructor
 public class AgentDTO {

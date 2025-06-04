@@ -1,8 +1,9 @@
 package com.cts.insurance.customer.exception;
 
 public class CustomerNotFoundException extends Exception {
-    public CustomerNotFoundException(String message) {
-        super(message);
-    }
-    
+	// Constructs a new CustomerNotFoundException with the specified detail message
+	public CustomerNotFoundException(String message) {
+		super(message);
+	}
+
 }

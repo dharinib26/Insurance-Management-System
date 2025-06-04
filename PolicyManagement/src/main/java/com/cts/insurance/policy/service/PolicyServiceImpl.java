@@ -27,24 +27,25 @@ public class PolicyServiceImpl implements PolicyService {
 
 	@Override
 	public Policy createPolicy(Policy policy) throws CustomerNotFoundException {
-		log.info("Creating policy: {}", policy);
-		//Validate Customer
-        try {
-			customerClient.getCustomerById(policy.getCustomerId());
-		} catch (Exception e) {
-			log.error("Invalid Customer ID: {}", policy.getCustomerId(), e);
-			throw new CustomerNotFoundException("Invalid Customer ID: " + policy.getCustomerId());
-		}
- 
-		// Validate agent
-        try {
-			agentClient.getAgentById(policy.getAgentId());
-		} catch (Exception e) {
-			log.error("Invalid Agent ID: {}", policy.getAgentId(), e);
-			throw new AgentNotFoundException("Invalid Agent ID: " + policy.getAgentId());
-		}
-        return repository.save(policy);
-	}
+	    log.info("Creating policy: {}", policy);
+	    // Validate Customer
+	    try {
+	        customerClient.getCustomerById(policy.getCustomerId());
+	    } catch (Exception e) {
+	        log.error("Invalid Customer ID: {}", policy.getCustomerId(), e);
+	        throw new CustomerNotFoundException("Invalid Customer ID: " + policy.getCustomerId());
+	    }
+
+	    // Validate agent
+	    try {
+	        agentClient.getAgentById(policy.getAgentId());
+	    } catch (Exception e) {
+	        log.error("Invalid Agent ID: {}", policy.getAgentId(), e);
+	        throw new AgentNotFoundException("Invalid Agent ID: " + policy.getAgentId());
+	    }
+	    return repository.save(policy);
+	}	
+
 
 	@Override
 	public List<Policy> getAllPolicies() {
@@ -57,8 +58,8 @@ public class PolicyServiceImpl implements PolicyService {
 		log.info("Retrieving policy by ID: {}", id);
 		return repository.findById(id)
 				.orElseThrow(() -> new PolicyNotFoundException("Policy not found with ID: " + id));
-	}
-
+	}	
+	
 	@Override
 	public Policy updatePolicy(Long id, Policy updatedPolicy) {
 		log.info("Updating policy with ID: {}", id);
@@ -78,41 +79,8 @@ public class PolicyServiceImpl implements PolicyService {
 	}
 
 	@Override
-	public PolicyDTO getPolicyWithCustomer(Long policyId, Long customerId) throws CustomerNotFoundException {
-		log.info("Fetching policy {} with customer {}", policyId, customerId);
-		Policy policy = getPolicyById(policyId);
-		if (policy == null) {
-			throw new PolicyNotFoundException("Policy not found with ID: " + policyId);
-		}
-		Customer customer = customerClient.getCustomerById(customerId);
-		if (customer == null) {
-			throw new CustomerNotFoundException("Customer not found with ID: " + customerId);
-		}
-		PolicyDTO dto = new PolicyDTO();
-		dto.setId(policy.getId());
-		dto.setPolicyName(policy.getName());
-		dto.setPolicyType(policy.getPolicyType());
-		dto.setDescription(policy.getDescription());
-		dto.setPremium(policy.getPremium());
-		dto.setCoverageAmount(policy.getCoverageAmount());
-		dto.setCustomerId(policy.getCustomerId());
-		return dto;
+	public List<Policy> getPoliciesByCustomerId(Long id) {
+	    return repository.findByCustomerId(id);
 	}
 
-	@Override
-	public PolicyDTO getPolicyWithAgent(Long policyId, Long agentId) {
-		log.info("Fetching policy {} with agent {}", policyId, agentId);
-		Policy policy = getPolicyById(policyId);
-		AgentDTO agent = agentClient.getAgentById(agentId);
-
-		PolicyDTO dto = new PolicyDTO();
-		dto.setId(policy.getId());
-		dto.setPolicyName(policy.getName());
-		dto.setPolicyType(policy.getPolicyType());
-		dto.setDescription(policy.getDescription());
-		dto.setPremium(policy.getPremium());
-		dto.setCoverageAmount(policy.getCoverageAmount());
-		dto.setAgentId(policy.getAgentId());
-		return dto;
-	}
 }

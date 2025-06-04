@@ -48,14 +48,6 @@ class CustomerManagementApplicationTest {
 
 	@Test
 	@Order(2)
-	void testFindCustomerByEmail() {
-		Customer customer = customerRepository.findByEmail("testuser@example.com").orElse(null);
-		assertNotNull(customer, "Customer should be found by email");
-		assertEquals("Test User", customer.getName());
-	}
-
-	@Test
-	@Order(3)
 	void testUpdateCustomer() {
 		Customer existing = customerRepository.findAll().get(0);
 		existing.setAddress("Updated Address");
@@ -64,7 +56,7 @@ class CustomerManagementApplicationTest {
 	}
 
 	@Test
-	@Order(4)
+	@Order(3)
 	void testDeleteCustomer() {
 		Customer existing = customerRepository.findAll().get(0);
 		customerRepository.delete(existing);

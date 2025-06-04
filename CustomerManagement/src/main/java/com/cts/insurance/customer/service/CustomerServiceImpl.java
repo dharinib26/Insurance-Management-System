@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.cts.insurance.customer.customerDTO.PolicyDTO;
 import com.cts.insurance.customer.exception.CustomerNotFoundException;
+import com.cts.insurance.customer.exception.PolicyNotFoundException;
 import com.cts.insurance.customer.feign.PolicyClient;
 import com.cts.insurance.customer.model.Customer;
 import com.cts.insurance.customer.repository.CustomerRepository;
@@ -29,7 +30,7 @@ public class CustomerServiceImpl implements CustomerService {
 	private PolicyClient policyClient;
 
 	@Override
-
+	// Creates a new customer
 	public Customer createCustomer(Customer customer) {
 
 		log.info("Creating new customer: {}", customer.getName());
@@ -39,7 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-
+	// Retrieves all customers
 	public List<Customer> getAllCustomers() {
 
 		return customerRepository.findAll();
@@ -47,9 +48,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-
+	// Retrieves a customer by its ID
 	public Customer getCustomerById(Long id) throws CustomerNotFoundException {
-		
+
 		Optional<Customer> optional = customerRepository.findById(id);
 		if (optional.isPresent())
 			return optional.get();
@@ -58,7 +59,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-
+	// Updates an existing customer
 	public Customer updateCustomer(Long id, Customer customerDetails) {
 
 		Customer customer = customerRepository.findById(id)
@@ -72,6 +73,8 @@ public class CustomerServiceImpl implements CustomerService {
 		customer.setPhoneNumber(customerDetails.getPhoneNumber());
 
 		customer.setAddress(customerDetails.getAddress());
+		
+		customer.setAssignedPolicyId(customerDetails.getAssignedPolicyId());
 
 		log.info("Updating customer with ID: {}", id);
 
@@ -80,7 +83,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-
+	// Deletes a customer by its ID
 	public void deleteCustomer(Long id) {
 
 		log.warn("Deleting customer with ID: {}", id);
@@ -90,28 +93,41 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-
-	public List<Customer> searchCustomersByName(String name) {
-
-		return customerRepository.findByNameContainingIgnoreCase(name);
-
-	}
-
-	@Override
-
-	public Optional<Customer> getCustomerByEmail(String email) {
-
-		return customerRepository.findByEmail(email);
-
-	}
-
-	@Override
-
+	// Retrieves policies associated with a customer by their ID
 	public List<PolicyDTO> getCustomerPolicies(Long customerId) {
 
 		return policyClient.getPoliciesByCustomerId(customerId);
-		// return List.of();
 
+	}
+	
+	@Override
+    public Customer assignPolicyToCustomer(Long customerId, Long policyId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found with ID: " + customerId));
+ 
+        try {
+            PolicyDTO policy = policyClient.getById(policyId);
+            if (policy == null || policy.getPolicyId() == null) {
+                throw new PolicyNotFoundException("Policy with ID " + policyId + " not found.");
+            }
+        } catch (Exception e) {
+            throw new PolicyNotFoundException("Policy service unavailable or policy not found.");
+        }
+ 
+        customer.setAssignedPolicyId(policyId);
+        return customerRepository.save(customer);
+    }
+ 
+	@Override
+	public List<Customer> getCustomersByPolicyId(Long policyId) throws CustomerNotFoundException {
+		List<Customer> customers = customerRepository.findByAssignedPolicyId(policyId);
+		
+        if (customers.isEmpty()) {
+            throw new CustomerNotFoundException("No customers found for Policy ID: " + policyId);
+        }
+ 
+        return customers;
+    
 	}
 
 }

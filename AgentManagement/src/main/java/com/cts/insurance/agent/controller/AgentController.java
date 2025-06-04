@@ -12,6 +12,7 @@ import java.util.List;
 @RequestMapping("/agents")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin("*")
 public class AgentController {
 
 	private final AgentService service;
@@ -36,7 +37,7 @@ public class AgentController {
 
 	// Method to update an agent by ID
 	@PutMapping("/update/{id}")
-	public Agent update(@PathVariable Long id, @RequestBody Agent agent) {
+	public Agent update(@PathVariable("id") Long id, @RequestBody Agent agent) {
 		return service.updateAgent(id, agent);
 	}
 

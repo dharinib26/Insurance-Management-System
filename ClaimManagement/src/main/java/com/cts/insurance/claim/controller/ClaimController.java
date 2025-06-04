@@ -1,5 +1,5 @@
 package com.cts.insurance.claim.controller;
- 
+
 import com.cts.insurance.claim.model.Claim;
 
 import com.cts.insurance.claim.service.ClaimService;
@@ -12,95 +12,93 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.web.bind.annotation.*;
- 
+
 import java.util.List;
- 
+
 @RestController
 
 @RequestMapping("/claims")
 
 @RequiredArgsConstructor
 
+@CrossOrigin("*")
 
 public class ClaimController {
- 
-    private static final Logger logger = LoggerFactory.getLogger(ClaimController.class);
- 
-    private final ClaimService claimService;
- 
-    // Create a new claim
 
-    @PostMapping("/save")
+	private static final Logger logger = LoggerFactory.getLogger(ClaimController.class);
 
-    public Claim createClaim(@Valid @RequestBody Claim claim) {
+	private final ClaimService claimService;
 
-        logger.info("Received request to create claim");
+	// Create a new claim
 
-        return claimService.createClaim(claim);
+	@PostMapping("/save")
 
-    }
- 
-    // Get claim by ID
+	public Claim createClaim(@Valid @RequestBody Claim claim) {
 
-    @GetMapping("/{id}")
+		logger.info("Received request to create claim");
 
-    public Claim getClaimById(@PathVariable Long id) {
+		return claimService.createClaim(claim);
 
-        logger.info("Received request to get claim with ID: {}", id);
+	}
 
-        return claimService.getClaimById(id);
+	// Get claim by ID
 
-    }
- 
-    // Get all claims
+	@GetMapping("/{id}")
 
-    @GetMapping("/getAllClaims")
+	public Claim getClaimById(@PathVariable Long id) {
 
-    public List<Claim> getAllClaims() {
+		logger.info("Received request to get claim with ID: {}", id);
 
-        logger.info("Received request to get all claims");
+		return claimService.getClaimById(id);
 
-        return claimService.getAllClaims();
+	}
 
-    }
- 
-    // Update claim
+	// Get all claims
 
-    @PutMapping("/update-status/{id}")
+	@GetMapping("/getAllClaims")
 
-    public Claim updateClaim(@PathVariable("id") Long id, @Valid @RequestBody Claim claim) {
+	public List<Claim> getAllClaims() {
 
-        logger.info("Received request to update claim with ID: {}", id);
+		logger.info("Received request to get all claims");
 
-        return claimService.updateClaim(id, claim);
+		return claimService.getAllClaims();
 
-    }
- 
-    // Delete claim
+	}
 
-    @DeleteMapping("/{id}")
+	// Update claim
 
-    public void deleteClaim(@PathVariable Long id) {
+	@PutMapping("/update-status/{id}")
 
-        logger.info("Received request to delete claim with ID: {}", id);
+	public Claim updateClaim(@PathVariable("id") Long id,@RequestBody Claim claim) {
 
-        claimService.deleteClaim(id);
+		logger.info("Received request to update claim with ID: {}", id);
 
-    }
- 
-    // Get claims by policy ID
+		return claimService.updateClaim(id, claim);
 
-    @GetMapping("/policy/{policyId}")
+	}
 
-    public List<Claim> getClaimsByPolicyId(@PathVariable Long policyId) {
+	// Delete claim
 
-        logger.info("Received request to get claims for policy ID: {}", policyId);
+	@DeleteMapping("/{id}")
 
-        return claimService.getClaimsByPolicyId(policyId);
+	public void deleteClaim(@PathVariable Long id) {
 
-    } 
-    
+		logger.info("Received request to delete claim with ID: {}", id);
+
+		claimService.deleteClaim(id);
+
+	}
+
+	// Get claims by policy ID
+
+	@GetMapping("/policy/{policyId}")
+
+	public List<Claim> getClaimsByPolicyId(@PathVariable Long policyId) {
+
+		logger.info("Received request to get claims for policy ID: {}", policyId);
+
+		return claimService.getClaimsByPolicyId(policyId);
+
+	}
 
 }
-
- 

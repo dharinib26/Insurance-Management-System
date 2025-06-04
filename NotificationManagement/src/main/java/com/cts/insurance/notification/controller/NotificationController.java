@@ -1,32 +1,25 @@
 package com.cts.insurance.notification.controller;
 
-import com.cts.insurance.notification.dto.NotificationResponse;
-import com.cts.insurance.notification.model.NotificationRequest;
-import com.cts.insurance.notification.service.NotificationService;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import com.cts.insurance.notification.model.Notification;
+import com.cts.insurance.notification.service.NotificationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/notifications")
-@Slf4j
-@AllArgsConstructor
+@RequestMapping("/notification")
+@RequiredArgsConstructor
 public class NotificationController {
 
-	private NotificationService notificationService;
+    private final NotificationService service;
 
-	// Send a custom notification
-	@PostMapping("/send/{policyId}")
-	public NotificationResponse send(@RequestBody NotificationRequest request) {
-		log.info("Sending custom notification for policy ID: {}", request.getPolicyId());
-		return notificationService.sendNotification(request.getPolicyId(), request.getMessage());
-	}
+    @PostMapping("/notify/{policyId}")
+    public String notifyCustomer(@PathVariable Long policyId) throws Exception {
+        return service.notify(policyId);
+    }
 
-	// Notify policy holder with default message
-	@PostMapping("/notify/{policyId}")
-	public NotificationResponse notify(@PathVariable Long policyId) {
-		log.info("Sending default notification for policy ID: {}", policyId);
-		return notificationService.notifyPolicyHolder(policyId);
-	}
+    @PostMapping("/sendNotification")
+    public String sendCustom(@RequestBody Notification notification) throws Exception {
+        return service.sendCustomNotification(notification);
+    }
 }

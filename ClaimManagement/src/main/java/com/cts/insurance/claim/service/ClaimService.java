@@ -5,6 +5,7 @@ import com.cts.insurance.claim.dto.PolicyDTO;
 
 import java.util.List;
 
+//ClaimService interface provides methods for managing insurance claims.
 public interface ClaimService {
 	Claim createClaim(Claim claim);
 

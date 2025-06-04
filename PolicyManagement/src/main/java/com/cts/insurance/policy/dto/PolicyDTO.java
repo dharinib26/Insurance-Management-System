@@ -9,7 +9,7 @@ public class PolicyDTO {
     private String policyType;
     private String description;
     private Double premium;
-    private int coverageAmount;
+    private long coverageAmount;
     private long customerId;
     private long agentId;
 }

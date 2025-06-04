@@ -1,13 +1,11 @@
 package com.cts.insurance.claim.service;
 
-import com.cts.insurance.claim.exception.ClaimNotFoundException;
+import com.cts.insurance.claim.exception.ClaimNotFoundException; 
 import com.cts.insurance.claim.exception.InvalidClaimException;
 import com.cts.insurance.claim.model.Claim;
 import com.cts.insurance.claim.dto.PolicyDTO;
 import com.cts.insurance.claim.feign.PolicyClient;
 import com.cts.insurance.claim.repository.ClaimRepository;
-
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,70 +18,61 @@ import java.util.List;
 
 public class ClaimServiceImpl implements ClaimService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClaimServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(ClaimServiceImpl.class);
 
-    private final ClaimRepository claimRepository;
-    private final PolicyClient policyClient;
+	private final ClaimRepository claimRepository;
+	private final PolicyClient policyClient;
 
-    @Override
-    public Claim createClaim(Claim claim) {
-        logger.info("Creating new claim for policy ID: {}", claim.getPolicyId());
-        
-        // Fetch the policy details using Feign client
-        PolicyDTO policy = policyClient.getPolicyById(claim.getPolicyId());
-        
-        // Validate claim amount against policy coverage amount
-        if (claim.getClaimAmount() > policy.getCoverageAmount()) {
-            throw new InvalidClaimException("Claim amount exceeds coverage amount.");
-        }
-        
-        return claimRepository.save(claim);
+	@Override
+	public Claim createClaim(Claim claim) {
+		logger.info("Creating new claim for policy ID: {}", claim.getPolicyId());
+
+		// Fetch the policy details using Feign client
+		PolicyDTO policy = policyClient.getPolicyById(claim.getPolicyId());
+
+		// Validate claim amount against policy coverage amount
+		if (claim.getClaimAmount() > policy.getCoverageAmount()) {
+			throw new InvalidClaimException("Claim amount exceeds coverage amount.");
+		}
+		claim.setClaimStatus("FILED");
+		return claimRepository.save(claim);
+	}
+
+	// Retrieves a claim by its ID
+	@Override
+	public Claim getClaimById(Long id) {
+		logger.info("Fetching claim with ID: {}", id);
+		return claimRepository.findById(id)
+				.orElseThrow(() -> new ClaimNotFoundException("Claim not found with ID: " + id));
+	}
+
+	// Retrieves all claims
+	@Override
+	public List<Claim> getAllClaims() {
+		logger.info("Fetching all claims");
+		return claimRepository.findAll();
+	}
+
+	@Override
+    public Claim updateClaim(Long id, Claim updated) {
+        Claim existing = claimRepository.findById(id)
+                .orElseThrow(() -> new ClaimNotFoundException("Claim not found with id: " + id));
+        existing.setClaimStatus(updated.getClaimStatus());
+        return claimRepository.save(existing);
     }
 
-    @Override
-    public Claim getClaimById(Long id) {
-        logger.info("Fetching claim with ID: {}", id);
-        return claimRepository.findById(id)
-                .orElseThrow(() -> new ClaimNotFoundException("Claim not found with ID: " + id));
-    }
+	// Deletes a claim by its ID
+	@Override
+	public void deleteClaim(Long id) {
+		logger.info("Deleting claim with ID: {}", id);
+		Claim existingClaim = getClaimById(id);
+		claimRepository.delete(existingClaim);
+	}
 
-    @Override
-    public List<Claim> getAllClaims() {
-        logger.info("Fetching all claims");
-        return claimRepository.findAll();
-    }
-
-    @Override
-    @Transactional
-    public Claim updateClaim(Long id, Claim updatedClaim) {
-        logger.info("Updating claim with ID: {}", id);
-
-        // Fetch the existing claim from the database
-        Claim existingClaim = getClaimById(id);
-
-        // Update only the claimStatus if it is provided in the request body
-        if (updatedClaim.getClaimStatus() != null) {
-            existingClaim.setClaimStatus(updatedClaim.getClaimStatus());
-            logger.info("Claim status updated for ID: {} to {}", id, updatedClaim.getClaimStatus());
-        } else {
-            logger.warn("Claim status not provided for ID: {}", id);
-        }
-
-        // Save and return the updated claim
-        return claimRepository.save(existingClaim);
-    }
-
-    @Override
-    public void deleteClaim(Long id) {
-        logger.info("Deleting claim with ID: {}", id);
-        Claim existingClaim = getClaimById(id);
-        claimRepository.delete(existingClaim);
-    }
-
-    @Override
-    public List<Claim> getClaimsByPolicyId(Long policyId) {
-        logger.info("Fetching claims for policy ID: {}", policyId);
-        return claimRepository.findByPolicyId(policyId);
-    }
+	// Retrieves claims by the given policy ID
+	@Override
+	public List<Claim> getClaimsByPolicyId(Long policyId) {
+		logger.info("Fetching claims for policy ID: {}", policyId);
+		return claimRepository.findByPolicyId(policyId);
+	}
 }
-

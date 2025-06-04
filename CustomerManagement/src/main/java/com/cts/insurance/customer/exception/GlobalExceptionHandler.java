@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import lombok.Data;
 
+//GlobalExceptionHandler handles exceptions globally across the application
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -27,6 +28,7 @@ public class GlobalExceptionHandler {
 	}
 }
 
+//ErrorResponse is a simple class for representing error details in responses
 @Data
 class ErrorResponse {
 	private int statusCode;

@@ -16,9 +16,8 @@ public interface PolicyService {
  
     Policy updatePolicy(Long id, Policy updatedPolicy);
  
-    void deletePolicy(Long id);    
- 
-    PolicyDTO getPolicyWithCustomer(Long policyId, Long customerId) throws CustomerNotFoundException;
- 
-    PolicyDTO getPolicyWithAgent(Long policyId, Long agentId);
+    void deletePolicy(Long id);  
+
+	List<Policy> getPoliciesByCustomerId(Long id);
+
 }
