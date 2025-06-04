@@ -1,15 +1,26 @@
 package com.cts.insurance.customer.controller;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.cts.insurance.customer.customerDTO.PolicyDTO;
 import com.cts.insurance.customer.exception.CustomerNotFoundException;
 import com.cts.insurance.customer.model.Customer;
 import com.cts.insurance.customer.service.CustomerServiceImpl;
 
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 //CustomerController handles HTTP requests related to customer operations
 @RestController
@@ -57,4 +68,20 @@ public class CustomerController {
 	public List<PolicyDTO> getCustomerPolicies(@PathVariable Long id) {
 		return customerService.getCustomerPolicies(id);
 	}
+	
+	@PutMapping("/{customerId}/assignPolicy/{policyId}")
+    public ResponseEntity<Customer> assignPolicyToCustomer(
+            @PathVariable Long customerId,
+            @PathVariable Long policyId) {
+ 
+        Customer updated = customerService.assignPolicyToCustomer(customerId, policyId);
+        return new ResponseEntity<>(updated, HttpStatus.OK);
+    }
+    
+    @GetMapping("/getCustomersByPolicyId/{policyId}")
+    public List<Customer> customersByPolicyId(@PathVariable Long policyId) throws CustomerNotFoundException{
+    	return customerService.getCustomersByPolicyId(policyId);
+    }
+	
+	
 }
